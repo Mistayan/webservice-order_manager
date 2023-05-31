@@ -1,0 +1,60 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://localhost:1117/orders"
+           targetNamespace="http://localhost:1117/orders"
+           elementFormDefault="qualified">
+
+    <xs:element name="getOrderRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getOrderResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="order" type="tns:Order"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createOrderRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="order" type="tns:Order"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createOrderResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Order">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="customerName" type="xs:string"/>
+            <xs:element name="items" type="tns:Items"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Items">
+        <xs:sequence>
+            <xs:element name="item" type="tns:Item" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Item">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="quantity" type="xs:int"/>
+            <xs:element name="unitPrice" type="xs:float"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
