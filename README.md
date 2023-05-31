@@ -89,4 +89,25 @@ classDiagram
 </div>
 
 
+## Documentation
+
+
+| # | route             | méthode    | entrée                 | server status   | observation |
+|---|-------------------|------------|------------------------|-----------------|-------------|
+| 1 | /articles         | GET        | *                      | 200             | étape1      |
+| 2 | /articles/create  | POST       | {nom, prix}            | 200 / 201 / 403 | étape1      |
+| 3 | /articles/update  | POST / PUT | {nv_nom, nx_prix}      | 200 / 202 / 204 | étape1      |
+| 4 | /articles/delete  | DELETE     | {article_id}           | 200             | étape1      |
+| - | -                 | -          | -                      | -               | -           |
+| 5 | /commandes        | GET        | *                      | 200             | étape2      |
+| 6 | /commandes/create | POST       | {client, articles}     | 200 / 201 / 403 | étape2      |
+| - | -                 | -          | -                      | -               | -           |
+| 7 | /commandes/update | POST / PUT | {commande_id, nx_data} | 200 / 202 / 204 | optionnelle |
+| 8 | /commandes/delete | DELETE     | {commande_id}          | 200             | optionnelle |
+
+<div align="center">
+
+`Tables des endpoints`
+</div>
+
 
