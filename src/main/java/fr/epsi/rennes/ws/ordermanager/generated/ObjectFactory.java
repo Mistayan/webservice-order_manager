@@ -30,26 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetOrderRequest }
-     * 
-     * @return
-     *     the new instance of {@link GetOrderRequest }
-     */
-    public GetOrderRequest createGetOrderRequest() {
-        return new GetOrderRequest();
-    }
-
-    /**
-     * Create an instance of {@link GetOrderResponse }
-     * 
-     * @return
-     *     the new instance of {@link GetOrderResponse }
-     */
-    public GetOrderResponse createGetOrderResponse() {
-        return new GetOrderResponse();
-    }
-
-    /**
      * Create an instance of {@link Order }
      * 
      * @return
@@ -58,36 +38,16 @@ public class ObjectFactory {
     public Order createOrder() {
         return new Order();
     }
-
-    /**
-     * Create an instance of {@link CreateOrderRequest }
-     * 
-     * @return
-     *     the new instance of {@link CreateOrderRequest }
-     */
-    public CreateOrderRequest createCreateOrderRequest() {
-        return new CreateOrderRequest();
-    }
-
-    /**
-     * Create an instance of {@link CreateOrderResponse }
-     * 
-     * @return
-     *     the new instance of {@link CreateOrderResponse }
-     */
-    public CreateOrderResponse createCreateOrderResponse() {
-        return new CreateOrderResponse();
-    }
-
-    /**
-     * Create an instance of {@link Items }
-     * 
-     * @return
-     *     the new instance of {@link Items }
-     */
-    public Items createItems() {
-        return new Items();
-    }
+//
+//    /**
+//     * Create an instance of {@link OrderItems }
+//     *
+//     * @return
+//     *     the new instance of {@link OrderItems }
+//     */
+//    public OrderItems createItems() {
+//        return new OrderItems();
+//    }
 
     /**
      * Create an instance of {@link Item }

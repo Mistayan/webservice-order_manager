@@ -2,57 +2,53 @@
 package fr.epsi.rennes.ws.ordermanager.generated;
 
 import jakarta.persistence.*;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Sort;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 
-/**
- * <p>Java class for Order complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>{@code
- * <complexType name="Order">
- *   <complexContent>
- *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <sequence>
- *         <element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         <element name="customerName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         <element name="items" type="{http://localhost:1117/orders}Items"/>
- *       </sequence>
- *     </restriction>
- *   </complexContent>
- * </complexType>
- * }</pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Order", propOrder = {
-    "id",
-    "customerName",
-    "items"
-})
+//disabled SerializationFeature.FAIL_ON_EMPTY_BEANS
+
 @Getter
 @Setter
 @Entity(name = "orders")
-public class Order {
+public class Order implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 71293691263123L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    protected Long id;
+    protected int id;
 
-    @XmlElement(required = true)
     @Column(name = "customer_name", nullable = false)
     protected String customerName;
 
-    @XmlElement(required = true)
-    @OneToOne(cascade = CascadeType.ALL)
-    protected Items items;
+    @ManyToMany
+    @JoinTable(
+            name = "commande_article",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    protected List<Item> orderItems;
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", customerName='" + customerName + '\'' +
+                ", orderItems=" + orderItems +
+                '}';
+    }
+
+    public List<Item> getOrderItems() {
+        if (orderItems == null) {
+            orderItems = new java.util.ArrayList<>();
+        }
+        return this.orderItems;
+    }
 }
