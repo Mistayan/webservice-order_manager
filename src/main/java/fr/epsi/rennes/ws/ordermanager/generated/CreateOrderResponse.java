@@ -33,13 +33,13 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "createOrderResponse")
 public class CreateOrderResponse {
 
-    protected int orderId;
+    protected Long orderId;
 
     /**
      * Gets the value of the orderId property.
      * 
      */
-    public int getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
@@ -47,7 +47,7 @@ public class CreateOrderResponse {
      * Sets the value of the orderId property.
      * 
      */
-    public void setOrderId(int value) {
+    public void setOrderId(Long value) {
         this.orderId = value;
     }
 

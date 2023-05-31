@@ -42,7 +42,7 @@ import lombok.Setter;
 public class Items {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_list_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @XmlElement(required = true)

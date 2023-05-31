@@ -44,8 +44,8 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false)
-    protected int id;
+    @Column(name = "id", nullable = false)
+    protected Long id;
 
     @XmlElement(required = true)
     @Column(name = "customer_name", nullable = false)
