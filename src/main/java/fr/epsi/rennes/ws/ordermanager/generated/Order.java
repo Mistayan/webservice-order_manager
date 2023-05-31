@@ -30,7 +30,7 @@ public class Order implements Serializable {
 
     @ManyToMany
     @JoinTable(
-            name = "commande_article",
+            name = "order_items",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
