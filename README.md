@@ -19,14 +19,14 @@ git clone
 
 ### Sujet
 
-* Vous allez devoir mettre en place plusieurs endpoint REST pour gérer les stock d’un magasin.
-Vous ne gérer qu’un seul magasin. Vous allez donc gérer un liste d’article qui sera le stock, un article
+* Vous allez devoir mettre en place plusieurs endpoint __REST__ pour gérer les stock d’un magasin.
+Vous ne gérer qu’un seul magasin. Vous allez donc gérer une liste d’article qui sera le stock, un article
 à une désignation, une quantité et un prix.
 
-* Création d’un CRUD pour gérer des articles
+* Création d’un __CRUD__ pour gérer des articles.
 
-* Ajout d’une gestion de commande. Un article a une quantité dans la commande.
-*Note : Une commande contenant un article diminue automatiquement la quantité de l’article en
+* Ajout d’une gestion de commande. Un article a une quantité dans la commande. <br>
+*<ins>Note</ins> : Une commande contenant un article diminue automatiquement la quantité de l’article en
 question dans le stock, la gestion de l’annulation de la commande n’est pas demandé.*
 
 ### Contraintes
@@ -52,6 +52,11 @@ erDiagram
         int Id
         string Client
         float PrixTotal
+    }
+    Article ||--|| Stock : compte
+    Stock {
+        int Id_Article
+        int Quantite
     }
 
 ```
@@ -110,4 +115,57 @@ classDiagram
 `Tables des endpoints`
 </div>
 
+```mermaid
+sequenceDiagram
+    Utilisateur->>WebService: creer un article
+    WebService-)Route: /article/create
+    Route->>Données: action sur la base
+    Données -->> WebService: réponse
+    WebService -->> Utilisateur : information
+```
+<div align="center">
 
+`Diagramme de séquence`
+</div>
+
+```mermaid
+flowchart LR
+    subgraph Utilisateur
+        subgraph Action
+            creerA["creer un article"]
+            supprimerA["supprimer un article"]
+            creerC["creer une commande"]
+        end
+    end
+    subgraph WebService
+        subgraph Routes
+            r_creerA["/article/creer"]
+            r_supprimerA["/article/supprimer?id"]
+            r_creerC["/commande/creer"]
+        end
+    end
+    subgraph Données
+        subgraph Tables
+            Articles
+            Stock
+            Commande
+        end
+    end
+
+    creerA --> r_creerA --> Articles
+    supprimerA --> r_supprimerA --> Articles
+    creerC --> r_creerC --> Commande & Stock
+```
+<div align="center">
+
+`Diagramme de cas d'utilisation`
+</div>
+
+
+## Architecture REST (Representational State Transfer) 
+
+```txt
+Architecture SOAP mise en place dans un premier temps (montée en compétences en lien avec les entreprises des membres du groupe).
+
+Architecture REST : TODO
+```
