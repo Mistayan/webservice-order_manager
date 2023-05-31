@@ -1,14 +1,17 @@
 package fr.epsi.rennes.ws.ordermanager.service;
 
+import fr.epsi.rennes.ws.ordermanager.generated.Item;
 import fr.epsi.rennes.ws.ordermanager.repository.ItemRepository;
 import fr.epsi.rennes.ws.ordermanager.repository.OrderRepository;
 import fr.epsi.rennes.ws.ordermanager.generated.Order;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OrderService {
@@ -18,12 +21,15 @@ public class OrderService {
     private ItemRepository itemRepository;
 
     public Order createOrder(Order order) {
-        Order savedOrder = orderRepository.save(order);
-        order.getItems().getItem().forEach(item -> {
-            item.setOrder(savedOrder);
-            itemRepository.save(item);
-        });
-        return savedOrder;
+        log.info("Creating order: {}", order.toString());
+        List<Item> items = order.getOrderItems();
+        order.setOrderItems(new java.util.ArrayList<>());
+        for (Item item : items) {
+            order.getOrderItems().add(itemRepository.getReferenceById(item.getId()));
+        }
+        log.info("Saving order: {}", order.toString());
+        itemRepository.saveAll(order.getOrderItems());
+        return orderRepository.save(order);
     }
 
     public Order getOrder(int orderId) {
@@ -39,4 +45,12 @@ public class OrderService {
         orderRepository.deleteById(orderId);
     }
 
+    public Order updateOrder(Order order) {
+        return orderRepository.save(order);
+    }
+
+    public Order addItems(Order order, List<Item> items) {
+        order.getOrderItems().addAll(itemRepository.findAllById(items.stream().map(Item::getId).toList()));
+        return orderRepository.save(order);
+    }
 }
