@@ -22,13 +22,6 @@ public class OrderService {
 
     public Order createOrder(Order order) {
         log.info("Creating order: {}", order.toString());
-        List<Item> items = order.getOrderItems();
-        order.setOrderItems(new java.util.ArrayList<>());
-        for (Item item : items) {
-            order.getOrderItems().add(itemRepository.getReferenceById(item.getId()));
-        }
-        log.info("Saving order: {}", order.toString());
-        itemRepository.saveAll(order.getOrderItems());
         return orderRepository.save(order);
     }
 
