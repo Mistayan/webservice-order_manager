@@ -2,15 +2,14 @@
 package fr.epsi.rennes.ws.ordermanager.generated;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.domain.Sort;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-
-//disabled SerializationFeature.FAIL_ON_EMPTY_BEANS
 
 @Getter
 @Setter
@@ -23,10 +22,11 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    protected int id;
+    private int id;
 
     @Column(name = "customer_name", nullable = false)
-    protected String customerName;
+    @Pattern(regexp = "^[a-zA-Z ]+$", message = "Customer name must contain only letters and spaces")
+    private String customerName;
 
     // un Item peut être commandé plusieurs fois, dans ce cas, il faut le stocker plusieurs fois dans la table de jointure
 
@@ -36,7 +36,8 @@ public class Order implements Serializable {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-    protected List<Item> orderItems;
+    @Min(value = 1, message = "Order must contain at least one item")
+    private List<Item> orderItems;
 
     @Override
     public String toString() {
