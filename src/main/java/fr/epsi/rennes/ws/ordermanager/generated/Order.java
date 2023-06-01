@@ -2,8 +2,8 @@
 package fr.epsi.rennes.ws.ordermanager.generated;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +36,7 @@ public class Order implements Serializable {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-    @Min(value = 1, message = "Order must contain at least one item")
+    @Size(min = 1, message = "Order must contain at least one item")
     private List<Item> orderItems;
 
     @Override
