@@ -6,31 +6,30 @@ import fr.epsi.rennes.ws.ordermanager.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 
 import java.util.List;
 
 @EnableWebMvc
 @RestController
-@RequestMapping("/orders")
+@RequestMapping(value = "/orders", consumes = "application/json", produces = "application/json")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping(value = "/{orderId}", produces = "application/json")
+    @GetMapping(value = "/{orderId}")
     @ResponseBody
     public Order getOrder(@PathVariable int orderId) {
         return orderService.getOrder(orderId);
     }
 
-    @GetMapping(value = "/getAll", produces = "application/json")
+    @GetMapping(value = "/getAll")
     @ResponseBody
     public Iterable<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
-    @PostMapping(value = "/new", consumes = "application/json")
+    @PostMapping(value = "/new")
     @ResponseBody
     public Order createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
@@ -42,19 +41,20 @@ public class OrderController {
         orderService.deleteOrder(orderId);
     }
 
-    @PutMapping(value = "/{orderId}/update", consumes = "application/json", produces = "application/json")
+    @PutMapping(value = "/{orderId}/update")
     @ResponseBody
     public Order updateOrder(@PathVariable int orderId,@RequestBody Order order) {
         return orderService.updateOrder(order);
     }
 
-    @PostMapping(value = "/addList", consumes = "application/json")
+    @PostMapping(value = "/addList")
     @ResponseBody
     public void addAllOrders(@RequestBody Iterable<Order> orders) {
         for (Order order : orders) {
             createOrder(order);
         }
     }
+
     @PutMapping("/{id}/articles")
     public Order addArticlesToCommande(@PathVariable int id, @RequestBody List<Item> items) {
         Order order = orderService.getOrder(id);
