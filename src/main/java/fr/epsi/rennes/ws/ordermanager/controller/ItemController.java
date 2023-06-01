@@ -10,29 +10,30 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/items")
+@RequestMapping(value="/items", consumes = "application/json", produces = "application/json")
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-    @GetMapping(value = "/{itemId}", produces = "application/json")
+
+    @GetMapping(value = "/{itemId}")
     @ResponseBody
     public Item getItem(@PathVariable int itemId) {
         return itemService.getItem(itemId);
     }
 
-    @PostMapping(value = "/new", consumes = "application/json")
+    @PostMapping(value = "/new")
     @ResponseBody
     public void createItem(@RequestBody Item item) {
         itemService.createItem(item);
     }
 
-    @PostMapping(value = "/{itemId}/update", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/{itemId}/update")
     @ResponseBody
     public Item updateItem(@PathVariable int itemId,@RequestBody Item item) {
         return itemService.updateItem(item);
     }
 
-    @PostMapping(value = "/addList", consumes = "application/json")
+    @PostMapping(value = "/addList")
     @ResponseBody
     public void addAllItems(@RequestBody List<Item> items) {
         for (Item item : items) {
