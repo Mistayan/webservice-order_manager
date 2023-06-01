@@ -88,7 +88,7 @@
     </dependencies>
 
     <build>
-
+        <finalName>order-manager</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -100,7 +100,21 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <image>
+                        <name>mistayan/order-manager</name>
+                        <tags>
+                            <tag>latest</tag>
+                            <tag>v${project.version}</tag>
+                        </tags>
+                    </image>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-image-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
