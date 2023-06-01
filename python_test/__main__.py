@@ -9,17 +9,18 @@ import requests
 # Change this to fit ur real database
 TABLES_KEYS = {
     'article': {
-        'nom': 'name',
-        'prix': 'unit_price',
-        'id': 'item_id'
+        'nom': 'name',  // String Unique
+        'prix': 'unitPrice',  // FLOAT
+        'id': 'id'  // ID Unique
     },
-    'commande': {
-        'client': 'customer_name'
+    'command': {
+        'client': 'customer_name'  // String
+        'articles': 'orderItems' // List of ID
     }
 
 }
 
-_URL = "http://127.0.0.1:5017/debug_webservice"
+_URL = "http://127.0.0.1:1117/"
 
 ########################################################################################################################
 # PAYLOADs
@@ -128,6 +129,7 @@ cmds = {
 
 for cmd_name, cmd in cmds.items():
     try:
+        url = _URL + "orders" if cmd_name.contains("command") else "items"
         r = requests.post(url=_URL, data=json.dumps(cmd))
     except ValueError as e:
         print('====================')
