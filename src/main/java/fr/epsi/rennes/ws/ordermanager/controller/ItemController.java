@@ -29,7 +29,17 @@ public class ItemController {
     @PostMapping(value = "/{itemId}/update", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public Item updateItem(@PathVariable int itemId,@RequestBody Item item) {
+        if (item.getId() != itemId) {
+            log.error("Item ID mismatch");
+            return null;
+        }
         return itemService.updateItem(item);
+    }
+
+    @DeleteMapping(value = "/{itemId}/delete")
+    @ResponseBody
+    public void deleteItem(@PathVariable int itemId) {
+        itemService.deleteItem(itemId);
     }
 
     @PostMapping(value = "/addList", consumes = "application/json")
@@ -38,5 +48,17 @@ public class ItemController {
         for (Item item : items) {
             createItem(item);
         }
+    }
+
+    @PutMapping("/stock/update")
+    @ResponseBody
+    public void updateQuantity(@RequestBody Item item) {
+        itemService.updateQuantity(item);
+    }
+
+    @PutMapping("/stock/add")
+    @ResponseBody
+    public void addQuantity(@RequestBody Item item) {
+        itemService.addQuantity(item);
     }
 }

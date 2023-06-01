@@ -2,6 +2,8 @@
 package fr.epsi.rennes.ws.ordermanager.generated;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,15 +28,22 @@ public class Item implements Serializable {
     @Column(nullable = false, unique = true)
     protected String name;
 
-    @Column(name = "unit_price", nullable = false)
+    // price cannot be negative
+    @Column(name = "unit_price", nullable = false, columnDefinition = "float default 0.0")
     protected float unitPrice;
+
+    // sur une commande, représente la quantité commandée à déduire du stock
+    // sur un Item, représente la quantité en stock
+    @Column(nullable = false, columnDefinition = "int default 0.0")
+    private int quantity;
 
     @Override
     public String toString() {
         return "Item{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", unitPrice=" + unitPrice +
+                "id= " + id +
+                ", name= '" + name + '\'' +
+                ", quantity= " + quantity +
+                ", unitPrice= " + unitPrice +
                 '}';
     }
 }
