@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fr.epsi.rennes.ws</groupId>
-    <artifactId>orderManager</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>orderManager</name>
-    <description>orderManager</description>
+    <artifactId>order-manager</artifactId>
+    <version>0.7.0</version>
+    <name>order-manager</name>
+    <description>permet de gérer un stock de vente et les commandes passées dessus</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -80,7 +80,11 @@
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
             <version>4.0.1</version>
         </dependency>
-
+        <!-- actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
