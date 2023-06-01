@@ -28,7 +28,9 @@ public class Order implements Serializable {
     @Column(name = "customer_name", nullable = false)
     protected String customerName;
 
-    @ManyToMany
+    // un Item peut être commandé plusieurs fois, dans ce cas, il faut le stocker plusieurs fois dans la table de jointure
+
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_items",
             joinColumns = @JoinColumn(name = "order_id"),
