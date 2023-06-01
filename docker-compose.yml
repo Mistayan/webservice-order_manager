@@ -1,0 +1,56 @@
+volumes:
+  data:
+
+
+version: '3.3'
+services:
+  api:
+    image: mistayan/order-manager:latest
+    container_name: order-manager
+    restart: always
+    ports:
+      - "0.0.0.0:1117:1117"
+    volumes:
+      - data:/data
+
+    environment:
+      - postgres_db=postgres
+      - postgres_user=postgres
+      - postgres_password=1234
+      - postgres_port=5432
+      - postgres_host=localhost
+      - postgres_schema=public
+      - SERVER_URL=0.0.0.0
+      - SERVER_PORT=1117
+
+    depends_on:
+        - postgres
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1117/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+        - data:/var/lib/postgresql/data
+    environment:
+        - POSTGRES_DB=postgres
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=1234
+        - POSTGRES_PORT=5432
+        - POSTGRES_HOST=localhost
+        - POSTGRES_SCHEMA=public
+
+    healthcheck:
+        test: ["CMD", "pg_isready", "-U", "postgres"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
