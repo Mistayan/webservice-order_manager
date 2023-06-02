@@ -10,9 +10,24 @@
 
 ## How to run
 
-```sh
-git clone
-...
+```shell
+git clone https://github.com/Mistayan/webservice-order_manager.git
+cd webservice-order_manager
+mvn clean install
+```
+
+[remplacer avec h2 config]
+Nous avons besoin de lancer une db provisoire de test pour construire l'image
+##  (optional) Construire l'image en local
+```shell
+docker run --name=tmp_db -v ~/shared_with_postgres:/var/data -e POSTGRES_PASSWORD=1234 -p 5432:5432 postgres:latest ;
+mvn spring-boot:build-image ;
+docker kill tmp_db ;
+```
+
+Enfin, on peut quitter la db provisoire et lancer le projet. (si l'étape précédente a été omise, chargera la dernière version officielle du projet)
+```shell
+docker compose up
 ```
 
 ## Cahier des charges
