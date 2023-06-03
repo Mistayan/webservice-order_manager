@@ -9,9 +9,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
+
 @EnableWebMvc
 @RestController
-@RequestMapping(value = "/orders", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/commandes", consumes = "application/json", produces = "application/json")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -29,22 +30,16 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
-    @PostMapping(value = "/new")
+    @PostMapping(value = "/create")
     @ResponseBody
     public Order createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
     }
 
-    @DeleteMapping(value ="/{orderId}/delete", params = "orderId={orderId}")
+    @DeleteMapping(value ="/delete", params = "orderId={orderId}")
     @ResponseBody
-    public void deleteOrder(@PathVariable int orderId) {
-        orderService.deleteOrder(orderId);
-    }
-
-    @PutMapping(value = "/{orderId}/update")
-    @ResponseBody
-    public Order updateOrder(@PathVariable int orderId,@RequestBody Order order) {
-        return orderService.updateOrder(order);
+    public void deleteOrder(@RequestBody Order order) {
+        orderService.deleteOrder(order);
     }
 
     @PostMapping(value = "/addList")
@@ -55,9 +50,8 @@ public class OrderController {
         }
     }
 
-    @PutMapping("/{id}/articles")
-    public Order addArticlesToCommande(@PathVariable int id, @RequestBody List<Item> items) {
-        Order order = orderService.getOrder(id);
-        return orderService.addItems(order, items);
+    @PutMapping("/update")
+    public Order updateOrder(@RequestBody Order order) {
+        return orderService.updateOrder(order);
     }
 }

@@ -26,7 +26,7 @@ public class Item implements Serializable {
     private int id;
 
     @Column(nullable = false, unique = true)
-    @Pattern(regexp = "^[a-zA-Z1-9() ]+$", message = "Item name must contain only letters, numbers and spaces ( also accepts () )")
+    @Pattern(regexp = "^[\\w \\d()_-]+$", message = "Item name must contain only letters, numbers and spaces ( also accepts () )")
     protected String name;
 
     // price cannot be negative
@@ -40,6 +40,9 @@ public class Item implements Serializable {
     @DecimalMin(value = "0.0", message = "Quantity cannot be negative")
     private int quantity;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean archived;
+
     @Override
     public String toString() {
         return "Item{" +
@@ -48,6 +51,10 @@ public class Item implements Serializable {
                 ", quantity= " + quantity +
                 ", unitPrice= " + unitPrice +
                 '}';
+    }
+
+    public void setArchived(boolean b) {
+        archived = b;
     }
 }
 

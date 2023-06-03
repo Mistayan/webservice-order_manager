@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value="/items", consumes = "application/json", produces = "application/json")
+@RequestMapping(value="/articles", consumes = "application/json", produces = "application/json")
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
@@ -18,13 +18,13 @@ public class ItemController {
     @GetMapping(value = "/{itemId}")
     @ResponseBody
     public Item getItem(@PathVariable int itemId) {
-        return itemService.getItem(itemId);
+        return itemService.getById(itemId);
     }
 
     @PostMapping(value = "/new")
     @ResponseBody
     public void createItem(@RequestBody Item item) {
-        itemService.createItem(item);
+        itemService.create(item);
     }
 
     @PostMapping(value = "/{itemId}/update")
@@ -34,13 +34,13 @@ public class ItemController {
             log.error("Item ID mismatch");
             return null;
         }
-        return itemService.updateItem(item);
+        return itemService.update(item);
     }
 
-    @DeleteMapping(value = "/{itemId}/delete")
+    @DeleteMapping(value = "/delete")
     @ResponseBody
-    public void deleteItem(@PathVariable int itemId) {
-        itemService.deleteItem(itemId);
+    public void deleteItem(@RequestBody Item item) {
+        itemService.delete(item);
     }
   
     @PostMapping(value = "/addList")

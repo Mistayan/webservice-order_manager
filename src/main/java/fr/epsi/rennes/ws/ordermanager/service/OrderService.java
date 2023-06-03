@@ -1,17 +1,15 @@
 package fr.epsi.rennes.ws.ordermanager.service;
 
 import fr.epsi.rennes.ws.ordermanager.generated.Item;
-import fr.epsi.rennes.ws.ordermanager.repository.ItemRepository;
-import fr.epsi.rennes.ws.ordermanager.repository.OrderRepository;
 import fr.epsi.rennes.ws.ordermanager.generated.Order;
+import fr.epsi.rennes.ws.ordermanager.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -20,7 +18,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    private final ItemRepository itemRepository;
     private final ItemService itemService;
 
     @Transactional
@@ -38,24 +35,51 @@ public class OrderService {
     }
 
     public Order getOrder(int orderId) {
-        Optional<Order> order = orderRepository.findById(orderId);
-        return order.orElse(null);
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (Objects.nonNull(order)) {
+            return order;
+        }
+        throw new ValidationException("Order not found");
     }
 
-    public List<Order> getAllOrders() {
+    public Iterable<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public void deleteOrder(int orderId) {
-        orderRepository.deleteById(orderId);
+    @Transactional
+    public void deleteOrder(Order order) {
+        removeItems(order, order.getOrderItems());
+        orderRepository.delete(order);
     }
 
+    @Transactional
     public Order updateOrder(Order order) {
-        return orderRepository.save(order);
+        Order dbOrder = getOrder(order.getId());
+        addMissingItems(dbOrder, order.getOrderItems());
+        return orderRepository.save(dbOrder);
     }
 
-    public Order addItems(Order order, List<Item> items) {
-        order.getOrderItems().addAll(itemRepository.findAllById(items.stream().map(Item::getId).toList()));
-        return orderRepository.save(order);
+    private void addMissingItems(Order dbOrder, List<Item> orderItems) {
+        orderItems.forEach(item -> {
+                        if (!dbOrder.getOrderItems().contains(item)) {
+                            itemService.subOne(item);
+                            dbOrder.getOrderItems().add(item);
+                        }
+                    }
+            );
+    }
+
+    public void removeItem(Order order, Item item) {
+        // quand on enlève un article d'une commande, on le remet dans le stock
+        item.setQuantity(1);
+        itemService.addQuantity(item);
+        order.getOrderItems().remove(item);
+    }
+
+    @Transactional
+    public void removeItems(Order order, List<Item> items) {
+        for (Item item : items) {
+            removeItem(order, item);
+        }
     }
 }
