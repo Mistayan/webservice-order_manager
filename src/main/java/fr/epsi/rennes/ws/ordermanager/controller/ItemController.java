@@ -21,19 +21,21 @@ public class ItemController {
         return itemService.getById(itemId);
     }
 
-    @PostMapping(value = "/new")
+    @GetMapping(value = "/all")
+    @ResponseBody
+    public Iterable<Item> getAllItems() {
+        return itemService.getAll();
+    }
+
+    @PostMapping(value = "/create")
     @ResponseBody
     public void createItem(@RequestBody Item item) {
         itemService.create(item);
     }
 
-    @PostMapping(value = "/{itemId}/update")
+    @PostMapping(value = "/update")
     @ResponseBody
-    public Item updateItem(@PathVariable int itemId,@RequestBody Item item) {
-        if (item.getId() != itemId) {
-            log.error("Item ID mismatch");
-            return null;
-        }
+    public Item updateItem(@RequestBody Item item) {
         return itemService.update(item);
     }
 
@@ -43,23 +45,10 @@ public class ItemController {
         itemService.delete(item);
     }
   
-    @PostMapping(value = "/addList")
+    @PostMapping(value = "/addAll")
     @ResponseBody
     public void addAllItems(@RequestBody List<Item> items) {
-        for (Item item : items) {
-            createItem(item);
-        }
+        itemService.addAll(items);
     }
 
-    @PutMapping("/stock/update")
-    @ResponseBody
-    public void updateQuantity(@RequestBody Item item) {
-        itemService.updateQuantity(item);
-    }
-
-    @PutMapping("/stock/add")
-    @ResponseBody
-    public void addQuantity(@RequestBody Item item) {
-        itemService.addQuantity(item);
-    }
 }

@@ -24,7 +24,7 @@ public class OrderController {
         return orderService.getOrder(orderId);
     }
 
-    @GetMapping(value = "/getAll")
+    @GetMapping(value = "/all")
     @ResponseBody
     public Iterable<Order> getAllOrders() {
         return orderService.getAllOrders();
@@ -42,7 +42,7 @@ public class OrderController {
         orderService.deleteOrder(order);
     }
 
-    @PostMapping(value = "/addList")
+    @PostMapping(value = "/addAll")
     @ResponseBody
     public void addAllOrders(@RequestBody Iterable<Order> orders) {
         for (Order order : orders) {

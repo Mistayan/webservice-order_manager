@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -17,9 +19,14 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public void create(Item item) {
+    public Throwable create(Item item) {
         log.info("Creating item: {}", item.toString());
-        itemRepository.save(item);
+        try {
+            itemRepository.save(item);
+        } catch (Exception e) {
+            throw new ValidationException("Error while creating item: %s".formatted(e.getMessage()));
+        }
+        return null;
     }
 
     public Item getById(int itemId) throws ValidationException {
@@ -64,17 +71,6 @@ public class ItemService {
         itemRepository.save(dbItem);
     }
 
-    /**
-     * Ajoute la quantité spécifiée d'un article au stock
-     *
-     * @param item l'article dont on doit incrémenter le stock
-     */
-    public void updateQuantity(Item item) {
-        Item dbItem = getById(item.getId());
-        dbItem.setQuantity(item.getQuantity());
-        itemRepository.save(dbItem);
-    }
-
     public void subOne(Item orderItem) throws ValidationException {
         Item dbItem = getById(orderItem.getId());
         if (dbItem.getQuantity() - 1 < 0) {
@@ -87,15 +83,17 @@ public class ItemService {
 
     @Transactional
     public void addAll(List<Item> items) {
-        Item lastItem = new Item();
-        try {
-            for (Item item : items) {
-                lastItem = item;
-                create(item);
-            }
-        } catch (Exception e) {
-            log.error("Error while creating item: {}", e.getMessage());
-            throw new ValidationException("Item %s already exists".formatted(lastItem.getName()));
+        List<Throwable> errors = new LinkedList<>();
+        for (Item item : items) {
+            errors.add(create(item));
         }
+        if (errors.stream().anyMatch(Objects::nonNull)) {
+            log.error("Error while creating items: {}", errors.stream().filter(Objects::nonNull).toList());
+        }
+
+    }
+
+    public Iterable<Item> getAll() {
+        return itemRepository.findAll().stream().filter(item -> !item.isArchived()).toList();
     }
 }
