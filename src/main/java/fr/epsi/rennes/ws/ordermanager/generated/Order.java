@@ -36,7 +36,6 @@ public class Order implements Serializable {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-    @Size(min = 1, message = "Order must contain at least one item")
     private List<Item> orderItems;
 
     @Override

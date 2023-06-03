@@ -8,11 +8,22 @@
 
     Membres : Stephen Proust, Noé Dubosq, Aurélien Gouriou, Olivier Bricaud
 
-## How to run
+## How install
 
-```sh
-git clone
-...
+```shell
+git clone https://github.com/Mistayan/webservice-order_manager.git
+cd webservice-order_manager
+mvn clean install
+```
+
+##  (optional) How to buid
+```shell
+mvn spring-boot:build-image
+```
+
+## How to run
+```shell
+docker compose up
 ```
 
 ## Cahier des charges
@@ -97,18 +108,20 @@ classDiagram
 ## Documentation
 
 
-| # | route             | méthode    | entrée                 | server status   | observation |
-|---|-------------------|------------|------------------------|-----------------|-------------|
-| 1 | /articles         | GET        | *                      | 200             | étape1      |
-| 2 | /articles/create  | POST       | {nom, prix}            | 200 / 201 / 403 | étape1      |
-| 3 | /articles/update  | POST / PUT | {nv_nom, nx_prix}      | 200 / 202 / 204 | étape1      |
-| 4 | /articles/delete  | DELETE     | {article_id}           | 200             | étape1      |
-| - | -                 | -          | -                      | -               | -           |
-| 5 | /commandes        | GET        | *                      | 200             | étape2      |
-| 6 | /commandes/create | POST       | {client, articles}     | 200 / 201 / 403 | étape2      |
-| - | -                 | -          | -                      | -               | -           |
-| 7 | /commandes/update | POST / PUT | {commande_id, nx_data} | 200 / 202 / 204 | optionnelle |
-| 8 | /commandes/delete | DELETE     | {commande_id}          | 200             | optionnelle |
+| # | route              | méthode | entrée                 | server status   | observation |
+|---|--------------------|---------|------------------------|-----------------|-------------|
+| 1 | /articles/{}       | GET     | id                     | 200             | étape1      |
+| 2 | /articles/getAll   | GET     | -                      | 200             | étape1      |
+| 3 | /articles/create   | POST    | {nom, prix}            | 200 / 201 / 403 | étape1      |
+| 4 | /articles/addAll   | POST    | [{nom, ...}, \]        | 200 / 201 / 403 | étape1      |
+| 5 | /articles/update   | PUT     | {n_nom, n_prix, n_qty} | 200 / 202 / 204 | étape1      |
+| 6 | /articles/delete   | DELETE  | {article_id}           | 200             | étape1      |
+| - | -                  | -       | -                      | -               | -           |
+| 5 | /commandes/{}      | GET     | *                      | 200             | étape2      |
+| 6 | /commandes/create  | POST    | {client, articles}     | 200 / 201 / 403 | étape2      |
+| - | -                  | -       | -                      | -               | -           |
+| 7 | /commandes/update  | PUT     | {commande_id, nx_data} | 200 / 202 / 204 | optionnelle |
+| 8 | /commandes/delete  | DELETE  | {commande_id}          | 200             | optionnelle |
 
 <div align="center">
 

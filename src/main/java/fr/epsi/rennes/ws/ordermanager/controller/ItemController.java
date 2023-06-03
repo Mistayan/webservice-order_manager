@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value="/items", consumes = "application/json", produces = "application/json")
+@RequestMapping(value="/articles", consumes = "application/json", produces = "application/json")
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
@@ -18,48 +18,37 @@ public class ItemController {
     @GetMapping(value = "/{itemId}")
     @ResponseBody
     public Item getItem(@PathVariable int itemId) {
-        return itemService.getItem(itemId);
+        return itemService.getById(itemId);
     }
 
-    @PostMapping(value = "/new")
+    @GetMapping(value = "/all")
+    @ResponseBody
+    public Iterable<Item> getAllItems() {
+        return itemService.getAll();
+    }
+
+    @PostMapping(value = "/create")
     @ResponseBody
     public void createItem(@RequestBody Item item) {
-        itemService.createItem(item);
+        itemService.create(item);
     }
 
-    @PostMapping(value = "/{itemId}/update")
+    @PostMapping(value = "/update")
     @ResponseBody
-    public Item updateItem(@PathVariable int itemId,@RequestBody Item item) {
-        if (item.getId() != itemId) {
-            log.error("Item ID mismatch");
-            return null;
-        }
-        return itemService.updateItem(item);
+    public Item updateItem(@RequestBody Item item) {
+        return itemService.update(item);
     }
 
-    @DeleteMapping(value = "/{itemId}/delete")
+    @DeleteMapping(value = "/delete")
     @ResponseBody
-    public void deleteItem(@PathVariable int itemId) {
-        itemService.deleteItem(itemId);
+    public void deleteItem(@RequestBody Item item) {
+        itemService.delete(item);
     }
   
-    @PostMapping(value = "/addList")
+    @PostMapping(value = "/addAll")
     @ResponseBody
     public void addAllItems(@RequestBody List<Item> items) {
-        for (Item item : items) {
-            createItem(item);
-        }
+        itemService.addAll(items);
     }
 
-    @PutMapping("/stock/update")
-    @ResponseBody
-    public void updateQuantity(@RequestBody Item item) {
-        itemService.updateQuantity(item);
-    }
-
-    @PutMapping("/stock/add")
-    @ResponseBody
-    public void addQuantity(@RequestBody Item item) {
-        itemService.addQuantity(item);
-    }
 }
