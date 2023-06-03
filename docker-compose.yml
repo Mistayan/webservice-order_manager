@@ -20,6 +20,7 @@ services:
       - data:/data
 
     environment:
+      - spring_datasource_driver-class-name=org.postgresql.Driver
       - spring_datasource_url=jdbc:postgresql://postgres_db:5432/postgres
       - postgres_user=postgres
       - postgres_password=1234
