@@ -57,7 +57,11 @@ public class OrderService {
             throw new ValidationException("Order not found");
         } catch (Exception e) {
             log.error("Error while getting order: {}", e.getMessage());
-            e.printStackTrace();
+            if (log.isDebugEnabled())
+                e.printStackTrace();
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
         }
         throw new ValidationException("Order not found");
     }
