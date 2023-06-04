@@ -17,7 +17,7 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @GetMapping(value = "/get}")
+    @GetMapping(value = "/get")
     @ResponseBody
     public Item getItem(@RequestBody Item item) {
         return itemService.getById(item.getId());
