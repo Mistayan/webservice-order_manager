@@ -1,9 +1,8 @@
-
 package fr.epsi.rennes.ws.ordermanager.generated;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,9 +19,9 @@ public class Order implements Serializable {
     private static final long serialVersionUID = 71293691263123L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private int id;
+    private String id;
 
     @Column(name = "customer_name", nullable = false)
     @Pattern(regexp = "^[a-zA-Z ]+$", message = "Customer name must contain only letters and spaces")
@@ -37,6 +36,10 @@ public class Order implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<Item> orderItems;
+
+    @Column(name = "total_price", nullable = false)
+    @DecimalMin(value = "0.0", inclusive = true, message = "Quantity cannot be negative nor 0")
+    private float totalPrice;
 
     @Override
     public String toString() {

@@ -27,9 +27,17 @@ public class OrderService {
     public Order createOrder(Order order) {
         log.info("Creating order: {}", order.toString());
         try {
+            // On calcule le prix total de la commande au moment de la création
+            // pour éviter que le prix ne change si un article est supprimé ou modifié du stock
+            float totalPrice = 0;
+
+            // on enlève 1 à la quantité de chaque item de la commande au stock
+            // si une quantité devient négative, une exception est levée, et la transaction annulée
             for (Item orderItem : order.getOrderItems()) {
-                itemService.subOne(orderItem);
+                Item dbItem = itemService.subOne(orderItem);
+                totalPrice += dbItem.getUnitPrice();
             }
+            order.setTotalPrice(totalPrice);
         } catch (ValidationException e) {
             log.error("Error while creating order: {}", e.getMessage());
             throw new ValidationException(e.getMessage());
@@ -89,12 +97,13 @@ public class OrderService {
 
     private void addMissingItems(Order dbOrder, List<Item> orderItems) {
         orderItems.forEach(item -> {
-                        if (!dbOrder.getOrderItems().contains(item)) {
-                            itemService.subOne(item);
-                            dbOrder.getOrderItems().add(item);
-                        }
+                    if (!dbOrder.getOrderItems().contains(item)) {
+                        Item dbItem = itemService.subOne(item);
+                        dbOrder.getOrderItems().add(dbItem);
+                        dbOrder.setTotalPrice(dbOrder.getTotalPrice() + dbItem.getUnitPrice());
                     }
-            );
+                }
+        );
     }
 
     public void removeItem(Order order, Item item) {
