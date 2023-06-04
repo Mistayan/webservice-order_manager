@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Future;
 
 @Slf4j
 @Service
@@ -34,12 +37,37 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order getOrder(int orderId) {
-        Order order = orderRepository.findById(orderId).orElse(null);
-        if (Objects.nonNull(order)) {
-            return order;
+    public Order getOrder(String orderId) {
+        Future<Optional<Order>> order = orderRepository.getByUUID(orderId);
+        try {
+            Order dbOrder = order.get().orElse(null);
+            if (dbOrder != null) {
+                // assemble order items before returning
+                assembleOrderItems(dbOrder);
+                return dbOrder;
+            }
+            throw new ValidationException("Order not found");
+        } catch (Exception e) {
+            log.error("Error while getting order: {}", e.getMessage());
+            e.printStackTrace();
         }
         throw new ValidationException("Order not found");
+    }
+
+    private void assembleOrderItems(Order order) {
+        // prevent items form being shown multiple times to user
+        // concat all duplicate items in order and add 1 quantity for each duplicate
+        final List<Item> finalList = new LinkedList<>();
+        for (Item orderItem : order.getOrderItems()) {
+            if (!finalList.contains(orderItem)) {
+                orderItem.setQuantity(1);
+                finalList.add(orderItem);
+                continue;
+            }
+            Item itemPojo = finalList.get(finalList.indexOf(orderItem));
+            itemPojo.setQuantity(itemPojo.getQuantity() + 1);
+        }
+        order.setOrderItems(finalList);
     }
 
     public Iterable<Order> getAllOrders() {

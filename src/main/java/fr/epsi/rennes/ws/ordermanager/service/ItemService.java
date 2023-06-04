@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,14 +20,13 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public Throwable create(Item item) {
+    public Item create(Item item) throws ValidationException {
         log.info("Creating item: {}", item.toString());
         try {
-            itemRepository.save(item);
+            return itemRepository.save(item);
         } catch (Exception e) {
-            throw new ValidationException("Error while creating item: %s".formatted(e.getMessage()));
+            throw new ValidationException("Error while creating item: %s".formatted(item.getName()));
         }
-        return null;
     }
 
     public Item getById(int itemId) throws ValidationException {
@@ -56,7 +56,7 @@ public class ItemService {
         dbItem.setName(item.getName());
         dbItem.setUnitPrice(item.getUnitPrice());
         dbItem.setQuantity(item.getQuantity());
-        return itemRepository.save(dbItem);
+        return itemRepository.saveAndFlush(dbItem);
     }
 
     /**
@@ -71,26 +71,33 @@ public class ItemService {
         itemRepository.save(dbItem);
     }
 
-    public void subOne(Item orderItem) throws ValidationException {
+    public Item subOne(Item orderItem) throws ValidationException {
         Item dbItem = getById(orderItem.getId());
         if (dbItem.getQuantity() - 1 < 0) {
             throw new ValidationException("Pas assez de stock sur l'objet " + dbItem.getName());
         }
-        log.info("Subtracting 1 QTY to {} ", dbItem.getName());
+        log.debug("Subtracting 1 QTY to {} ", dbItem.getName());
         dbItem.setQuantity(dbItem.getQuantity() - 1);
-        update(dbItem);
+        return update(dbItem);
     }
 
     @Transactional
     public void addAll(List<Item> items) {
         List<Throwable> errors = new LinkedList<>();
         for (Item item : items) {
-            errors.add(create(item));
+            try {
+                create(item);
+            } catch (ValidationException e) {
+                errors.add(e);
+            }
         }
         if (errors.stream().anyMatch(Objects::nonNull)) {
-            log.error("Error while creating items: {}", errors.stream().filter(Objects::nonNull).toList());
+            String errorMessages = errors.stream()
+                    .filter(Objects::nonNull).map(Throwable::getMessage)
+                    .collect(Collectors.joining("\n"));
+            log.error("Error while creating items: {}", errorMessages);
+            throw new ValidationException("Some items could not be created : %s".formatted(errorMessages));
         }
-
     }
 
     public Iterable<Item> getAll() {
