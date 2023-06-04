@@ -17,10 +17,10 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @GetMapping(value = "/{itemId}")
+    @GetMapping(value = "/get}")
     @ResponseBody
-    public Item getItem(@PathVariable int itemId) {
-        return itemService.getById(itemId);
+    public Item getItem(@RequestBody Item item) {
+        return itemService.getById(item.getId());
     }
 
     @GetMapping(value = "/all")
