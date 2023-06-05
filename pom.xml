@@ -10,7 +10,7 @@
     </parent>
     <groupId>fr.epsi.rennes.ws</groupId>
     <artifactId>order-manager</artifactId>
-    <version>0.7.0</version>
+    <version>0.9.0</version>
     <name>order-manager</name>
     <description>permet de gérer un stock de vente et les commandes passées dessus</description>
     <properties>
@@ -62,23 +62,9 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>8.0.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>4.0.1</version>
         </dependency>
         <!-- actuator -->
         <dependency>
