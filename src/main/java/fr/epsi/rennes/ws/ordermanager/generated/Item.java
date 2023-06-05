@@ -21,9 +21,15 @@ public class Item implements Serializable {
     @Column(nullable = false, unique = true)
     @Pattern(regexp = "^[\\w \\d()_-]+$", message = "Item name must contain only letters, numbers and spaces ( also accepts () )")
     protected String name;
+
     @Column(name = "unit_price", nullable = false)
     @DecimalMin(value = "0.0", inclusive = false, message = "Price cannot be negative or 0")
     protected float unitPrice;
+
+    @Column(name = "tva", nullable = false, columnDefinition = "float default 0.2")
+    @DecimalMin(value = "0.0", inclusive = false, message = "TVA cannot be negative or 0")
+    protected float tva;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 @Slf4j
@@ -35,9 +36,9 @@ public class OrderService {
             // si une quantité devient négative, une exception est levée, et la transaction annulée
             for (Item orderItem : order.getOrderItems()) {
                 Item dbItem = itemService.subOne(orderItem);
-                totalPrice += dbItem.getUnitPrice();
+                totalPrice += dbItem.getUnitPrice() * orderItem.getTva();
             }
-            order.setTotalPrice(totalPrice);
+            order.setTotalTTC(totalPrice);
         } catch (ValidationException e) {
             log.error("Error while creating order: {}", e.getMessage());
             throw new ValidationException(e.getMessage());
@@ -45,7 +46,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order getOrder(String orderId) {
+    public Order getOrder(UUID orderId) {
         Future<Optional<Order>> order = orderRepository.getByUUID(orderId);
         try {
             Order dbOrder = order.get().orElse(null);
@@ -104,7 +105,7 @@ public class OrderService {
                     if (!dbOrder.getOrderItems().contains(item)) {
                         Item dbItem = itemService.subOne(item);
                         dbOrder.getOrderItems().add(dbItem);
-                        dbOrder.setTotalPrice(dbOrder.getTotalPrice() + dbItem.getUnitPrice());
+                        dbOrder.setTotalTTC(dbOrder.getTotalHT() + dbItem.getUnitPrice());
                     }
                 }
         );

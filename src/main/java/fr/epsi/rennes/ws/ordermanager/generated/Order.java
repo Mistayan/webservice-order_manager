@@ -9,11 +9,14 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity(name = "orders")
 public class Order implements Serializable {
+
+    private static final String PRICE_ERROR_MESSAGE = "Price cannot be negative nor 0";
 
     @Serial
     private static final long serialVersionUID = 71293691263123L;
@@ -21,7 +24,7 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private String id;
+    private UUID id;
 
     @Column(name = "customer_name", nullable = false)
     @Pattern(regexp = "^[a-zA-Z ]+$", message = "Customer name must contain only letters and spaces")
@@ -37,14 +40,22 @@ public class Order implements Serializable {
     )
     private List<Item> orderItems;
 
+    @Column(name = "total_ttc", nullable = false)
+    @DecimalMin(value = "0.0", inclusive = true, message = PRICE_ERROR_MESSAGE)
+    private float totalTTC;
+
     @Column(name = "total_price", nullable = false)
-    @DecimalMin(value = "0.0", inclusive = true, message = "Quantity cannot be negative nor 0")
-    private float totalPrice;
+    @DecimalMin(value = "0.0", inclusive = true, message = PRICE_ERROR_MESSAGE)
+    private float totalHT;
+
+    public void setTotalTTC(float price) {
+        totalTTC = price;
+        totalHT = price / 1.2f;
+    }
 
     @Override
     public String toString() {
-        return "Order{" +
-                "id=" + id +
+        return id + ":{" +
                 ", customerName='" + customerName + '\'' +
                 ", orderItems=" + orderItems +
                 '}';
