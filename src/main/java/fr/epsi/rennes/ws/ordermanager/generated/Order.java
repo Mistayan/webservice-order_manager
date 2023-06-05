@@ -9,11 +9,14 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity(name = "orders")
 public class Order implements Serializable {
+
+    private static final String PRICE_ERROR_MESSAGE = "Price cannot be negative nor 0";
 
     @Serial
     private static final long serialVersionUID = 71293691263123L;
@@ -21,7 +24,7 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private String id;
+    private UUID id;
 
     @Column(name = "customer_name", nullable = false)
     @Pattern(regexp = "^[a-zA-Z ]+$", message = "Customer name must contain only letters and spaces")

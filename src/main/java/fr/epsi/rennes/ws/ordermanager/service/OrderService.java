@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order getOrder(String orderId) {
+    public Order getOrder(UUID orderId) {
         Future<Optional<Order>> order = orderRepository.getByUUID(orderId);
         try {
             Order dbOrder = order.get().orElse(null);
