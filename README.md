@@ -14,17 +14,38 @@
 git clone https://github.com/Mistayan/webservice-order_manager.git
 cd webservice-order_manager
 mvn clean install
+mvn build
 ```
 
-##  (optional) How to buid
+##  Comment lancer l'application (springboot + h2)
+Cette méthode ne permet pas de persister les données. (version d'essai) 
+```shell
+mvn spring-boot:run
+```
+
+## (optional) Utiliser l'application avec une persistance de données
+Cette méthode utilise une version Dockerisée et déployable de l'application. ( BDD postgresql )
+
+### PREREQUIS
+- docker
+- docker compose
+
+### BUILD
 ```shell
 mvn spring-boot:build-image
 ```
 
-## How to run
+### RUN
 ```shell
 docker compose up
 ```
+
+## How to use :
+L'app est accessible à l'adresse : http://localhost:1117/
+Les routes disponibles sont listées dans la section [Documentation](#documentation)
+
+La console administrateur h2 est accessible à l'adresse : http://localhost:1117/admn/h2-console  (user: manager, password: 1234)
+(permet de visualiser les données en base de données)
 
 ## Cahier des charges
 
