@@ -8,19 +8,32 @@
 
     Membres : Stephen Proust, Noé Dubosq, Aurélien Gouriou, Olivier Bricaud
 
-## How to run
-```sh
+## How install
+
+```shell
 git clone https://github.com/Mistayan/webservice-order_manager.git
 cd webservice-order_manager
-```
-```sh
 mvn clean install
-docker run --name=postgre_db -v ~/shared_with_postgres:/var/data -e POSTGRES_PASSWORD=1234 -p 5432:5432 postgres:latest
-mvn spring-boot:build-image
-docker kill postgre_db
-docker compose up
+mvn build
 ```
 
+##  Comment lancer l'application (springboot + h2)
+Cette méthode ne permet pas de persister les données. (version d'essai) 
+```shell
+mvn spring-boot:run
+```
+
+## (optional) Utiliser l'application avec une persistance de données
+Cette méthode utilise une version Dockerisée et déployable de l'application. ( BDD postgresql )
+
+### PREREQUIS
+- docker
+- docker compose
+
+### BUILD
+```shell
+mvn spring-boot:build-image
+```
 
 ## Cahier des charges
 

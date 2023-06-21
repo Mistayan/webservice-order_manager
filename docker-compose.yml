@@ -29,6 +29,13 @@ services:
       - LOGGING_LEVEL_ROOT=INFO
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK=INFO
       - LOGGING_LEVEL_ORG_HIBERNATE=INFO
+      - spring_datasource_driver-class-name=org.postgresql.Driver
+      - spring_datasource_url=jdbc:postgresql://postgres_db:5432/postgres
+      - spring_datasource_username=postgres
+      - spring_datasource_password=1234
+      - spring_datasource_schema=public
+      - SERVER_URL=0.0.0.0
+      - SERVER_PORT=1117
 
     depends_on:
         - postgres_db

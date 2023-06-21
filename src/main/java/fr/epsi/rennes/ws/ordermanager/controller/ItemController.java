@@ -4,62 +4,85 @@ import fr.epsi.rennes.ws.ordermanager.generated.Item;
 import fr.epsi.rennes.ws.ordermanager.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value="/items", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/articles", consumes = "application/json", produces = "application/json")
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
 
-    @GetMapping(value = "/{itemId}")
+    @GetMapping(value = "/get")
     @ResponseBody
-    public Item getItem(@PathVariable int itemId) {
-        return itemService.getItem(itemId);
+    public Item getItem(@RequestBody Item item) {
+        return itemService.getById(item.getId());
     }
 
-    @PostMapping(value = "/new")
+    @GetMapping(value = "/all")
     @ResponseBody
-    public void createItem(@RequestBody Item item) {
-        itemService.createItem(item);
+    public Iterable<Item> getAllItems() {
+        return itemService.getAll();
     }
 
-    @PostMapping(value = "/{itemId}/update")
+    @PostMapping(value = "/create")
     @ResponseBody
-    public Item updateItem(@PathVariable int itemId,@RequestBody Item item) {
-        if (item.getId() != itemId) {
-            log.error("Item ID mismatch");
-            return null;
+    public ResponseEntity<String> createItem(@RequestBody Item item) {
+        ResponseEntity<String> responseEntity;
+        try {
+            itemService.create(item);
+            responseEntity = new ResponseEntity<>("Article %s Créé".formatted(item.getName()), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while creating item " + item, e);
+            responseEntity = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return itemService.updateItem(item);
+        return responseEntity;
     }
 
-    @DeleteMapping(value = "/{itemId}/delete")
+    @PostMapping(value = "/update")
     @ResponseBody
-    public void deleteItem(@PathVariable int itemId) {
-        itemService.deleteItem(itemId);
-    }
-  
-    @PostMapping(value = "/addList")
-    @ResponseBody
-    public void addAllItems(@RequestBody List<Item> items) {
-        for (Item item : items) {
-            createItem(item);
+    public ResponseEntity<String> updateItem(@RequestBody Item item) {
+        ResponseEntity<String> responseEntity;
+        try {
+            itemService.update(item);
+            responseEntity = new ResponseEntity<>("OK", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while updating item " + item, e);
+            responseEntity = new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
+        return responseEntity;
     }
 
-    @PutMapping("/stock/update")
+    @DeleteMapping(value = "/delete")
     @ResponseBody
-    public void updateQuantity(@RequestBody Item item) {
-        itemService.updateQuantity(item);
+    public ResponseEntity<String> deleteItem(@RequestBody Item item) {
+        ResponseEntity<String> responseEntity;
+        try {
+            itemService.delete(item);
+            responseEntity = new ResponseEntity<>("Article désactivé", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while deleting item " + item, e);
+            responseEntity = new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+        return responseEntity;
     }
 
-    @PutMapping("/stock/add")
+    @PostMapping(value = "/addAll")
     @ResponseBody
-    public void addQuantity(@RequestBody Item item) {
-        itemService.addQuantity(item);
+    public ResponseEntity<String> addAllItems(@RequestBody List<Item> items) {
+        ResponseEntity<String> responseEntity;
+        try {
+            itemService.addAll(items);
+            responseEntity = new ResponseEntity<>("Articles Créés avec succès.", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while adding items " + items, e);
+            responseEntity = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
     }
+
 }

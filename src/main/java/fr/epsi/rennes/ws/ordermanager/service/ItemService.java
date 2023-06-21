@@ -2,59 +2,105 @@ package fr.epsi.rennes.ws.ordermanager.service;
 
 import fr.epsi.rennes.ws.ordermanager.generated.Item;
 import fr.epsi.rennes.ws.ordermanager.repository.ItemRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public void createItem(Item item) {
-        itemRepository.save(item);
+    public Item create(Item item) throws ValidationException {
+        log.info("Creating item: {}", item.toString());
+        try {
+            return itemRepository.save(item);
+        } catch (Exception e) {
+            throw new ValidationException("Error while creating item: %s".formatted(item.getName()));
+        }
     }
 
-    public Item getItem(int itemId) {
-        return itemRepository.findById(itemId).orElse(null);
+    public Item getById(int itemId) throws ValidationException {
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item != null) {
+            return item;
+        }
+        throw new ValidationException("Item not found");
     }
 
-    public void deleteItem(int itemId) {
-        itemRepository.deleteById(itemId);
+    /**
+     * Rends l'article invendable en mettant sa quantité à 0 et en le marquant comme supprimé
+     * Garde l'article en base de données pour l'historique des commandes / prix
+     *
+     * @param item l'article à 'supprimer'
+     */
+    public void delete(Item item) {
+        log.info("'Deleting' item: {}", item);
+        Item dbItem = getById(item.getId());
+        dbItem.setArchived(true);
+        dbItem.setQuantity(0);
+        itemRepository.save(dbItem);
     }
 
-    public Item updateItem(Item item) {
-        return itemRepository.save(item);
+    public Item update(Item item) {
+        Item dbItem = getById(item.getId());
+        dbItem.setName(item.getName());
+        dbItem.setUnitPrice(item.getUnitPrice());
+        dbItem.setQuantity(item.getQuantity());
+        return itemRepository.saveAndFlush(dbItem);
     }
 
+    /**
+     * Ajoute la quantité spécifiée d'un article au stock
+     *
+     * @param orderItem l'article dont on doit incrémenter le stock
+     */
     public void addQuantity(Item orderItem) {
-        Item dbItem = itemRepository.findById(orderItem.getId()).orElse(null);
-        if (dbItem != null) {
-            dbItem.setQuantity(orderItem.getQuantity() + dbItem.getQuantity());
-            updateItem(dbItem);
-        }
+        log.info("Adding {} QTY to {} ", orderItem.getQuantity(), orderItem.getName());
+        Item dbItem = getById(orderItem.getId());
+        dbItem.setQuantity(dbItem.getQuantity() + orderItem.getQuantity());
+        itemRepository.save(dbItem);
     }
 
-    public void updateQuantity(Item item) {
-        Item dbItem = itemRepository.findById(item.getId()).orElse(null);
-        if (dbItem != null) {
-            dbItem.setQuantity(item.getQuantity());
-            itemRepository.save(dbItem);
+    public Item subOne(Item orderItem) throws ValidationException {
+        Item dbItem = getById(orderItem.getId());
+        if (dbItem.getQuantity() - 1 < 0) {
+            throw new ValidationException("Pas assez de stock sur l'objet " + dbItem.getName());
         }
+        log.debug("Subtracting 1 QTY to {} ", dbItem.getName());
+        dbItem.setQuantity(dbItem.getQuantity() - 1);
+        return update(dbItem);
     }
 
-    public void subOne(Item orderItem) throws ValidationException {
-        Item dbItem = itemRepository.findById(orderItem.getId()).orElse(null);
-        if (dbItem != null) {
-            dbItem.setQuantity(dbItem.getQuantity() - 1);
-//            orderItem.setQuantity(1);
-//            orderItem.setUnitPrice(dbItem.getUnitPrice());
-//            orderItem.setName(dbItem.getName());
-            if (dbItem.getQuantity() < 0) {
-                throw new ValidationException("Pas assez de stock sur l'objet " + dbItem.getName());
+    @Transactional
+    public void addAll(List<Item> items) {
+        List<Throwable> errors = new LinkedList<>();
+        for (Item item : items) {
+            try {
+                create(item);
+            } catch (ValidationException e) {
+                errors.add(e);
             }
-            updateItem(dbItem);
         }
+        if (errors.stream().anyMatch(Objects::nonNull)) {
+            String errorMessages = errors.stream()
+                    .filter(Objects::nonNull).map(Throwable::getMessage)
+                    .collect(Collectors.joining("\n"));
+            log.error("Error while creating items: {}", errorMessages);
+            throw new ValidationException("Some items could not be created : %s".formatted(errorMessages));
+        }
+    }
+
+    public Iterable<Item> getAll() {
+        return itemRepository.findAll().stream().filter(item -> !item.isArchived()).toList();
     }
 }
