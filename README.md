@@ -132,7 +132,7 @@ classDiagram
 | #  | route             | méthode | entrée                 | server status   | observation  |
 |----|-------------------|---------|------------------------|-----------------|--------------|
 | 1  | /articles/get     | GET     | {id}                   | 200 / 404       | étape1       |
-| 2  | /articles/getAll  | GET     | -                      | 200             | étape1       |
+| 2  | /articles/all     | GET     | -                      | 200             | étape1       |
 | 3  | /articles/create  | POST    | {nom, prix}            | 200 / 201 / 403 | étape1       |
 | 4  | /articles/addAll  | POST    | [{nom, ...}, \]        | 200 / 201 / 403 | étape1       |
 | 5  | /articles/update  | PUT     | {n_nom, n_prix, n_qty} | 200 / 202 / 204 | étape1       |
@@ -141,7 +141,7 @@ classDiagram
 | 7  | /commandes/get    | GET     | {id: UUID}             | 200 / 404       | étape2       |
 | 8  | /commandes/create | POST    | {client, articles}     | 200 / 201 / 403 | étape2       |
 | -  | -                 | -       | -                      | -               | -            |
-| 9  | /commandes/getAll | GET     | *                      | 200             | optionnelle  |
+| 9  | /commandes/all    | GET     | *                      | 200             | optionnelle  |
 | 10 | /commandes/update | PUT     | {id, nx_data}          | 200 / 202 / 204 | optionnelle  |
 | 11 | /commandes/delete | DELETE  | {id: UUID}             | 200             | optionnelle  |
 
@@ -149,9 +149,14 @@ classDiagram
 
 `Tables des endpoints`
 </div>
-Admin Story :
-POST /articles/addAll
 
+Dans le cadre de l'exercice, l'authentification n'a pas été mise en place.
+
+## Admin Story :
+- L'admin peut créer un/plusieurs articles à la fois
+
+POST /articles/addAll
+Body : 
 ```json
 [
   {
@@ -189,6 +194,7 @@ POST /articles/addAll
 
 Le mec change un article suite à une fausse manip: (maj prix + maj stock)
 PUT /articles/update
+Body : 
 ```json
   {
   "id": 1,
@@ -200,23 +206,26 @@ PUT /articles/update
 
 User Story :
 
-Je créer une commande avec les articles selectionés sur la page:
+Je créer une commande avec les articles selectionnés sur la page:
 POST /commandes/create
+Body : 
 ```json
-  {
-  "customerName": "Bob",
-  "orderItems": [{"id": 1}, {"id": 1}, {"id": 2}, {"id": 3}]
-  }
+      {
+      "customerName": "Bob",
+      "orderItems": [{"id": 1}, {"id": 1}, {"id": 2}, {"id": 3}]
+      }
 ```
 -> Retourne UUID
 
 je regarde ma commande:
 GET /commandes/get
+Body : 
 ```json
 {"id": "UUID"}
 ```
 
 Réponse:
+Body : 
 ```json
 {
     "id": "UUID",
@@ -248,9 +257,9 @@ Réponse:
 }
 ```
 
-l'admin regarde toutes les commandes passées:
+l'admin regarde toutes les commandes passées :
 
-GET /commandes/getAll
+GET /commandes/all
 -> toutes les commandes passées et leur prix.
 
 ```mermaid
