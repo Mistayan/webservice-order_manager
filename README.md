@@ -35,6 +35,18 @@ Cette méthode utilise une version Dockerisée et déployable de l'application. 
 mvn spring-boot:build-image
 ```
 
+### RUN
+```shell
+docker compose up
+```
+
+## How to use :
+L'app est accessible à l'adresse : http://localhost:1117/
+Les routes disponibles sont listées dans la section [Documentation](#documentation)
+
+La console administrateur h2 est accessible à l'adresse : http://localhost:1117/admn/h2-console  (user: manager, password: 1234)
+(permet de visualiser les données en base de données)
+
 ## Cahier des charges
 
 ### Sujet
@@ -117,18 +129,21 @@ classDiagram
 ## Documentation
 
 
-| # | route             | méthode    | entrée                 | server status   | observation |
-|---|-------------------|------------|------------------------|-----------------|-------------|
-| 1 | /articles         | GET        | *                      | 200             | étape1      |
-| 2 | /articles/create  | POST       | {nom, prix}            | 200 / 201 / 403 | étape1      |
-| 3 | /articles/update  | POST / PUT | {nv_nom, nx_prix}      | 200 / 202 / 204 | étape1      |
-| 4 | /articles/delete  | DELETE     | {article_id}           | 200             | étape1      |
-| - | -                 | -          | -                      | -               | -           |
-| 5 | /commandes        | GET        | *                      | 200             | étape2      |
-| 6 | /commandes/create | POST       | {client, articles}     | 200 / 201 / 403 | étape2      |
-| - | -                 | -          | -                      | -               | -           |
-| 7 | /commandes/update | POST / PUT | {commande_id, nx_data} | 200 / 202 / 204 | optionnelle |
-| 8 | /commandes/delete | DELETE     | {commande_id}          | 200             | optionnelle |
+| #  | route             | méthode | entrée                 | server status   | observation  |
+|----|-------------------|---------|------------------------|-----------------|--------------|
+| 1  | /articles/get     | GET     | {id}                   | 200 / 404       | étape1       |
+| 2  | /articles/getAll  | GET     | -                      | 200             | étape1       |
+| 3  | /articles/create  | POST    | {nom, prix}            | 200 / 201 / 403 | étape1       |
+| 4  | /articles/addAll  | POST    | [{nom, ...}, \]        | 200 / 201 / 403 | étape1       |
+| 5  | /articles/update  | PUT     | {n_nom, n_prix, n_qty} | 200 / 202 / 204 | étape1       |
+| 6  | /articles/delete  | DELETE  | {article_id}           | 200             | étape1       |
+| -  | -                 | -       | -                      | -               | -            |
+| 7  | /commandes/get    | GET     | {id: UUID}             | 200 / 404       | étape2       |
+| 8  | /commandes/create | POST    | {client, articles}     | 200 / 201 / 403 | étape2       |
+| -  | -                 | -       | -                      | -               | -            |
+| 9  | /commandes/getAll | GET     | *                      | 200             | optionnelle  |
+| 10 | /commandes/update | PUT     | {id, nx_data}          | 200 / 202 / 204 | optionnelle  |
+| 11 | /commandes/delete | DELETE  | {id: UUID}             | 200             | optionnelle  |
 
 <div align="center">
 
