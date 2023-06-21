@@ -9,11 +9,18 @@
     Membres : Stephen Proust, Noé Dubosq, Aurélien Gouriou, Olivier Bricaud
 
 ## How to run
-
 ```sh
-git clone
-...
+git clone https://github.com/Mistayan/webservice-order_manager.git
+cd webservice-order_manager
 ```
+```sh
+mvn clean install
+docker run --name=postgre_db -v ~/shared_with_postgres:/var/data -e POSTGRES_PASSWORD=1234 -p 5432:5432 postgres:latest
+mvn spring-boot:build-image
+docker kill postgre_db
+docker compose up
+```
+
 
 ## Cahier des charges
 
