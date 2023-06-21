@@ -149,6 +149,109 @@ classDiagram
 
 `Tables des endpoints`
 </div>
+Admin Story :
+POST /articles/addAll
+
+```json
+[
+  {
+  "name": "gibson sg",
+  "unitPrice": "1250.00",
+  "quantity": 10
+  },
+    {
+  "name": "fender stratoctaster",
+  "unitPrice": "1100.00",
+  "quantity": 10
+  },
+    {
+  "name": "fender telecaster",
+  "unitPrice": "1200.00",
+  "quantity": 10
+  },
+    {
+  "name": "gibson explorer",
+  "unitPrice": "1000.00",
+  "quantity": 10
+  },
+    {
+  "name": "squier telecaster",
+  "unitPrice": "650.00",
+  "quantity": 10
+  },
+    {
+  "name": "epiphone lespaul",
+  "unitPrice": 800.00,
+  "quantity": 10
+  }
+]
+```
+
+Le mec change un article suite à une fausse manip: (maj prix + maj stock)
+PUT /articles/update
+```json
+  {
+  "id": 1,
+  "name": "gibson sg",
+  "unitPrice": "1250.75",
+  "quantity": 3
+    }
+```
+
+User Story :
+
+Je créer une commande avec les articles selectionés sur la page:
+POST /commandes/create
+```json
+  {
+  "customerName": "Bob",
+  "orderItems": [{"id": 1}, {"id": 1}, {"id": 2}, {"id": 3}]
+  }
+```
+-> Retourne UUID
+
+je regarde ma commande:
+GET /commandes/get
+```json
+{"id": "UUID"}
+```
+
+Réponse:
+```json
+{
+    "id": "UUID",
+    "customerName": "Bob",
+    "orderItems": [
+        {
+            "id": 1,
+            "name": "gibson sg",
+            "unitPrice": 1250.75,
+            "quantity": 2,
+            "archived": false
+        },
+        {
+            "id": 2,
+            "name": "fender stratoctaster",
+            "unitPrice": 1100.0,
+            "quantity": 1,
+            "archived": false
+        },
+        {
+            "id": 3,
+            "name": "fender telecaster",
+            "unitPrice": 1200.0,
+            "quantity": 1,
+            "archived": false
+        }
+    ],
+    "totalPrice": 4801.5
+}
+```
+
+l'admin regarde toutes les commandes passées:
+
+GET /commandes/getAll
+-> toutes les commandes passées et leur prix.
 
 ```mermaid
 sequenceDiagram
