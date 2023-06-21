@@ -8,29 +8,33 @@
 
     Membres : Stephen Proust, Noé Dubosq, Aurélien Gouriou, Olivier Bricaud
 
-## How install
+## Récupérer le projet
 
 ```shell
 git clone https://github.com/Mistayan/webservice-order_manager.git
 cd webservice-order_manager
+```
+
+### Installer le projet (Optionnel)
+```shell
 mvn clean install
 mvn build
 ```
 
-##  Comment lancer l'application (springboot + h2)
+###  Comment lancer l'application (springboot + h2) (Optionnel)
 Cette méthode ne permet pas de persister les données. (version d'essai) 
 ```shell
 mvn spring-boot:run
 ```
 
-## (optional) Utiliser l'application avec une persistance de données
+## Utiliser l'application avec une persistance de données
 Cette méthode utilise une version Dockerisée et déployable de l'application. ( BDD postgresql )
 
 ### PREREQUIS
 - docker
 - docker compose
 
-### BUILD
+### BUILD (optionnel, l'image est déjà disponible en ligne)
 ```shell
 mvn spring-boot:build-image
 ```
@@ -38,6 +42,11 @@ mvn spring-boot:build-image
 ### RUN
 ```shell
 docker compose up
+```
+
+### Pour un front permettant de tester l'application :
+```shell
+git clone https://gitlab.com/hylozoisme/order-manager-front.git
 ```
 
 ## How to use :
